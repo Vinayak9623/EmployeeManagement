@@ -13,4 +13,5 @@ ApiResponse<EmployeeResponse> createEmployee(EmployeeRequest employeeDto);
 
 ApiResponse<List<EmployeeResponse>> getAllEmployee();
 
+ApiResponse<?> deleteEmployee(long id);
 }

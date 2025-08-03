@@ -28,4 +28,11 @@ public class EmployeeController {
         ApiResponse<List<EmployeeResponse>> allEmployee = employeeService.getAllEmployee();
         return ResponseEntity.status(allEmployee.getStatus()).body(allEmployee);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteEmployee(@PathVariable long id){
+        ApiResponse<?> apiResponse = employeeService.deleteEmployee(id);
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+
+    }
 }

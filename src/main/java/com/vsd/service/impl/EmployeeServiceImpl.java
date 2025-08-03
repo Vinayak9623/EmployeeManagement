@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -75,6 +76,14 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(x -> modelMapper.map(x, EmployeeResponse.class))
                 .toList();
         return new ApiResponse<>(HttpStatus.OK.value(), "Employee fetch successfully",employeeResponses,null);
+    }
+
+    @Override
+    public ApiResponse<?> deleteEmployee(long id) {
+
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new RuntimeException("Employee not found" + id));
+        employeeRepo.deleteById(id);
+        return new ApiResponse<>(HttpStatus.OK.value(),"Employee Deleted successfully",null,null);
     }
 
 
