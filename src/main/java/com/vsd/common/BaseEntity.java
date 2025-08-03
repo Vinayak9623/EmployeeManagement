@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDate createdAt=LocalDate.now();
 
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDate updatedAt=LocalDate.now();
 
 }

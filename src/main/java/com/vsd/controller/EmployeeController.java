@@ -6,10 +6,9 @@ import com.vsd.common.ApiResponse;
 import com.vsd.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -22,5 +21,11 @@ public class EmployeeController {
     public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@RequestBody EmployeeRequest employee){
         ApiResponse<EmployeeResponse> response = employeeService.createEmployee(employee);
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/employee")
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getEmployees(){
+        ApiResponse<List<EmployeeResponse>> allEmployee = employeeService.getAllEmployee();
+        return ResponseEntity.status(allEmployee.getStatus()).body(allEmployee);
     }
 }

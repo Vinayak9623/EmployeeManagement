@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -23,29 +25,57 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public ApiResponse<EmployeeResponse> createEmployee(EmployeeRequest employeeDto) {
 
-        if(employeeRepo.existsByEmail(employeeDto.getEmail())){
-            return new ApiResponse<>(HttpStatus.CONFLICT.value(),"Email already exist",null,null);
+        Employee employee;
+        if(employeeDto.getId()==null) {
+            if (employeeRepo.existsByEmail(employeeDto.getEmail())) {
+                return new ApiResponse<>(HttpStatus.CONFLICT.value(), "Email already exist", null, null);
+            }
+
+      employee = Employee.builder().name(employeeDto.getName())
+                    .email(employeeDto.getEmail())
+                    .department(employeeDto.getDepartment())
+                    .position(employeeDto.getPosition())
+                    .salary(employeeDto.getSalary())
+                    .dateOfJoining(employeeDto.getDateOfJoining()).build();}
+        else {
+        employee = employeeRepo.findById(employeeDto
+                .getId()).orElseThrow(
+                        () -> new RuntimeException("Employee not found with ID" + employeeDto.getId()));
+
+            employee.setName(employeeDto.getName());
+            employee.setEmail(employeeDto.getEmail());
+            employee.setDepartment(employeeDto.getDepartment());
+            employee.setPosition(employeeDto.getPosition());
+            employee.setSalary(employeeDto.getSalary());
+            employee.setDateOfJoining(employeeDto.getDateOfJoining());
         }
 
-        Employee employee = Employee.builder().name(employeeDto.getName())
-                .email(employeeDto.getEmail())
-                .department(employeeDto.getDepartment())
-                .position(employeeDto.getPosition())
-                .salary(employeeDto.getSalary())
-                .dateOfJoining(employeeDto.getDateOfJoining()).build();
+            employee = employeeRepo.save(employee);
 
-        employee = employeeRepo.save(employee);
+            EmployeeResponse employeeResponse = EmployeeResponse.builder()
+                    .id(employee.getId())
+                    .name(employee.getName())
+                    .email(employee.getEmail())
+                    .department(employee.getDepartment())
+                    .position(employee.getPosition())
+                    .salary(employee.getSalary())
+                    .dateOfJoining(employee.getDateOfJoining()).build();
 
-        EmployeeResponse employeeResponse = EmployeeResponse.builder()
-                .id(employee.getId())
-                .name(employee.getName())
-                .email(employee.getEmail())
-                .department(employee.getDepartment())
-                .position(employee.getPosition())
-                .salary(employee.getSalary())
-                .dateOfJoining(employee.getDateOfJoining()).build();
+        String message = (employeeDto.getId() == null) ? "Employee created successfully" : "Employee updated successfully";
 
-        return new ApiResponse<>(HttpStatus.CREATED.value(),"Employee created successfully",employeeResponse,null);
+        return new ApiResponse<>(HttpStatus.CREATED.value(), message, employeeResponse, null);
+        }
 
+
+    @Override
+    public ApiResponse<List<EmployeeResponse>> getAllEmployee() {
+        List<Employee> employees = employeeRepo.findAll();
+        List<EmployeeResponse> employeeResponses = employees
+                .stream()
+                .map(x -> modelMapper.map(x, EmployeeResponse.class))
+                .toList();
+        return new ApiResponse<>(HttpStatus.OK.value(), "Employee fetch successfully",employeeResponses,null);
     }
+
+
 }
