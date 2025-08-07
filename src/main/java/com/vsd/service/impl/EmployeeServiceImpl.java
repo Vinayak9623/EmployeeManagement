@@ -5,14 +5,17 @@ import com.vsd.Dto.response.EmployeeResponse;
 import com.vsd.Repository.EmployeeRepo;
 import com.vsd.common.ApiResponse;
 import com.vsd.entity.Employee;
+import com.vsd.exception.customeEx.EmployeeNotFoundException;
 import com.vsd.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -41,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         else {
         employee = employeeRepo.findById(employeeDto
                 .getId()).orElseThrow(
-                        () -> new RuntimeException("Employee not found with ID" + employeeDto.getId()));
+                        () -> new  EmployeeNotFoundException("Employee not found with ID" + employeeDto.getId()));
 
             employee.setName(employeeDto.getName());
             employee.setEmail(employeeDto.getEmail());
@@ -66,6 +69,43 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return new ApiResponse<>(HttpStatus.CREATED.value(), message, employeeResponse, null);
         }
+
+    @Override
+    public ApiResponse<List<EmployeeResponse>> createListOfEmployee(List<EmployeeRequest>  employeeRequest) {
+
+        ArrayList<Employee> list = new ArrayList<>();
+
+        for(EmployeeRequest request:employeeRequest){
+        Employee employee;
+        if(request.getId()==null){
+            if (employeeRepo.existsByEmail(request.getEmail())){
+                return  new ApiResponse<>(HttpStatus.CONFLICT.value(), "Email already exist",null,null);
+            }
+          employee = modelMapper.map(request, Employee.class);
+            employee=Employee.builder()
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .department(request.getDepartment())
+                    .position(request.getPosition())
+                    .salary(request.getSalary())
+                    .dateOfJoining(request.getDateOfJoining()).build();
+            list.add(employee);
+        }
+        else {
+            employee=employeeRepo.findById(request.getId()).orElseThrow(()->new RuntimeException("Employee not found"));
+            employee.setName(request.getName());
+            employee.setEmail(request.getEmail());
+            employee.setDepartment(request.getDepartment());
+            employee.setPosition(request.getPosition());
+            employee.setSalary(request.getSalary());
+            employee.setDateOfJoining(request.getDateOfJoining());
+            list.add(employee);
+        }}
+
+        List<Employee> employees = employeeRepo.saveAll(list);
+        List<EmployeeResponse> employeeResponses = employees.stream().map(x -> modelMapper.map(x, EmployeeResponse.class)).toList();
+        return new ApiResponse<>(HttpStatus.CREATED.value(),"Employees created successfully", employeeResponses,null);
+    }
 
 
     @Override

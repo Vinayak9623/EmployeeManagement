@@ -23,6 +23,12 @@ public class EmployeeController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @PostMapping("/createAll")
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> createListOfEmployee(@RequestBody List<EmployeeRequest> requests){
+        ApiResponse<List<EmployeeResponse>> listOfEmployee = employeeService.createListOfEmployee(requests);
+        return ResponseEntity.status(listOfEmployee.getStatus()).body(listOfEmployee);
+    }
+
     @GetMapping("/employee")
     public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getEmployees(){
         ApiResponse<List<EmployeeResponse>> allEmployee = employeeService.getAllEmployee();

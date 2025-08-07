@@ -11,6 +11,8 @@ public interface EmployeeService {
 
 ApiResponse<EmployeeResponse> createEmployee(EmployeeRequest employeeDto);
 
+ApiResponse<List<EmployeeResponse>> createListOfEmployee(List<EmployeeRequest> employeeRequest);
+
 ApiResponse<List<EmployeeResponse>> getAllEmployee();
 
 ApiResponse<?> deleteEmployee(long id);
