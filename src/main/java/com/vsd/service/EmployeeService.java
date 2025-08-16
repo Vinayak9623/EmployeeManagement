@@ -19,5 +19,5 @@ ApiResponse<List<EmployeeResponse>> getAllEmployee();
 
 ApiResponse<?> deleteEmployee(long id);
 
-ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page,int size);
+ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page,int size,String sortField,String sortDir);
 }

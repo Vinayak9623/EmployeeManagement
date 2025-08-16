@@ -43,8 +43,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getPagenatedEmployees(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
-        ApiResponse<Page<EmployeeResponse>> pagableEmployee = employeeService.getPagableEmployee(page, size);
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getPagenatedEmployees(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size,@RequestParam(defaultValue = "id") String sortField,@RequestParam(defaultValue = "asc") String sortDir){
+        ApiResponse<Page<EmployeeResponse>> pagableEmployee = employeeService.getPagableEmployee(page, size,sortField,sortDir);
         return ResponseEntity.status(pagableEmployee.getStatus()).body(pagableEmployee);
 
     }

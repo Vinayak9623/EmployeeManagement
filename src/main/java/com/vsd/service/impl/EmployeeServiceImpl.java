@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -130,8 +131,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page, int size) {
-        Pageable pageable= PageRequest.of(page,size);
+    public ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page, int size,String sortField,String sortDir) {
+
+        Sort sort=sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortField).ascending():
+                Sort.by(sortField).descending();
+        Pageable pageable= PageRequest.of(page,size,sort);
         Page<Employee> employees = employeeRepo.findAll(pageable);
         Page<EmployeeResponse> employeeResponses = employees.map(x -> modelMapper.map(x, EmployeeResponse.class));
         return new ApiResponse<>(HttpStatus.OK.value(),"Employee fetch successfully",employeeResponses,null);
