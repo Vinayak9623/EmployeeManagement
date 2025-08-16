@@ -1,5 +1,6 @@
 package com.vsd.service;
 
+import com.vsd.Dto.Projection.EmployeeBesicProjection;
 import com.vsd.Dto.request.EmployeeRequest;
 import com.vsd.Dto.response.EmployeeResponse;
 import com.vsd.common.ApiResponse;
@@ -20,4 +21,6 @@ ApiResponse<List<EmployeeResponse>> getAllEmployee();
 ApiResponse<?> deleteEmployee(long id);
 
 ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page,int size,String sortField,String sortDir);
+
+ApiResponse<Page<EmployeeBesicProjection>> getEmployeeProjection(int page,int size);
 }

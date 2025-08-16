@@ -1,5 +1,6 @@
 package com.vsd.controller;
 
+import com.vsd.Dto.Projection.EmployeeBesicProjection;
 import com.vsd.Dto.request.EmployeeRequest;
 import com.vsd.Dto.response.EmployeeResponse;
 import com.vsd.common.ApiResponse;
@@ -46,6 +47,13 @@ public class EmployeeController {
     public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getPagenatedEmployees(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size,@RequestParam(defaultValue = "id") String sortField,@RequestParam(defaultValue = "asc") String sortDir){
         ApiResponse<Page<EmployeeResponse>> pagableEmployee = employeeService.getPagableEmployee(page, size,sortField,sortDir);
         return ResponseEntity.status(pagableEmployee.getStatus()).body(pagableEmployee);
+
+    }
+
+    @GetMapping("/projection")
+    public ResponseEntity<ApiResponse<Page<EmployeeBesicProjection>>> getEmployee(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
+        ApiResponse<Page<EmployeeBesicProjection>> employeeProjection = employeeService.getEmployeeProjection(page, size);
+        return ResponseEntity.status(employeeProjection.getStatus()).body(employeeProjection);
 
     }
 }

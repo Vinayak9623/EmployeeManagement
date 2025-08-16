@@ -1,5 +1,6 @@
 package com.vsd.service.impl;
 
+import com.vsd.Dto.Projection.EmployeeBesicProjection;
 import com.vsd.Dto.request.EmployeeRequest;
 import com.vsd.Dto.response.EmployeeResponse;
 import com.vsd.Repository.EmployeeRepo;
@@ -140,6 +141,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> employees = employeeRepo.findAll(pageable);
         Page<EmployeeResponse> employeeResponses = employees.map(x -> modelMapper.map(x, EmployeeResponse.class));
         return new ApiResponse<>(HttpStatus.OK.value(),"Employee fetch successfully",employeeResponses,null);
+    }
+
+    @Override
+    public ApiResponse<Page<EmployeeBesicProjection>> getEmployeeProjection(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<EmployeeBesicProjection> employeeBesicProjections = employeeRepo.findAllBy(pageRequest);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Employee fetch successfully",employeeBesicProjections,null);
     }
 
 
