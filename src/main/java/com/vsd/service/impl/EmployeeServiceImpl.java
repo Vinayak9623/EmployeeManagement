@@ -9,6 +9,9 @@ import com.vsd.exception.customeEx.EmployeeNotFoundException;
 import com.vsd.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -121,9 +124,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public ApiResponse<?> deleteEmployee(long id) {
 
-        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new RuntimeException("Employee not found" + id));
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found" + id));
         employeeRepo.deleteById(id);
         return new ApiResponse<>(HttpStatus.OK.value(),"Employee Deleted successfully",null,null);
+    }
+
+    @Override
+    public ApiResponse<Page<EmployeeResponse>> getPagableEmployee(int page, int size) {
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Employee> employees = employeeRepo.findAll(pageable);
+        Page<EmployeeResponse> employeeResponses = employees.map(x -> modelMapper.map(x, EmployeeResponse.class));
+        return new ApiResponse<>(HttpStatus.OK.value(),"Employee fetch successfully",employeeResponses,null);
     }
 
 

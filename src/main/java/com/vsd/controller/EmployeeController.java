@@ -5,6 +5,7 @@ import com.vsd.Dto.response.EmployeeResponse;
 import com.vsd.common.ApiResponse;
 import com.vsd.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,12 @@ public class EmployeeController {
     public ResponseEntity<ApiResponse<?>> deleteEmployee(@PathVariable long id){
         ApiResponse<?> apiResponse = employeeService.deleteEmployee(id);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getPagenatedEmployees(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
+        ApiResponse<Page<EmployeeResponse>> pagableEmployee = employeeService.getPagableEmployee(page, size);
+        return ResponseEntity.status(pagableEmployee.getStatus()).body(pagableEmployee);
 
     }
 }
